@@ -1,0 +1,52 @@
+1. Start 
+2. Read Order of Matrix (n).
+3. Read Matrix (A):
+	For i = 1 to n
+	  For j = 1 to n
+	    Read a[i][j]
+	  End j
+	End i
+
+4. Augment Identity Matrix of Order n to Matrix A:
+	For i = 1 to n
+	  For j = 1 to n
+	    If i = j
+	      A[i][j+n] = 1
+	    Else
+	      A[i][j+n] = 0
+	    End If
+	  End j
+	End i
+
+5. Apply Gauss Jordan Elimination on Augmented Matrix (a):
+	For i = 1 to n
+	    If a[i][i] = 0
+	    Print "Mathematical Error!" and Stop
+	    End If
+	    For j = 1 to n
+		If i ≠ j 
+		   pivot = a[j][i]/a[i][i]
+		   For k = 1 to n+1
+		       a[j][k] = a[j][k] - pivot * a[i][k]
+		   End k
+		   End If
+	    End j
+	End i
+	
+6. Row Operation to Convert Principal Diagonal to 1.
+	
+	For i = 1 to n
+	  For j = n+1 to 2*n
+	    a[i][j] = A[i][j]/A[i][i]
+	  End j
+	End i
+	
+7. Display Inverse Matrix:
+
+	For i = 1 to n
+	  For j = n+1 to 2*n
+	    Print a[i][j]
+	  End j
+	End i
+
+8. Stop

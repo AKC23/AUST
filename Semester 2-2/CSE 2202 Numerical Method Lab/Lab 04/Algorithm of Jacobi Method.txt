@@ -1,0 +1,41 @@
+Algorithm: Jacobi Method:
+Input: Order of the matrix, Coefficients of matrix of size n and vector b
+Output: Solution Vector {x1, x2,....xn}
+1. Declare the variables and read the order of the matrix n.
+2. Take the coefficients of the linear equation as:
+	for k=1 to n //access the rows
+		for j=1 to n //access the columns
+			Read a[k][j]
+		End for j
+	End for k
+3. Take the vector b
+	for i=1 to n
+           Read b[i]
+
+4. Choose initial guess x(0) to the solution x
+	for i=1 to n
+            x(0) = b[i]/a[i][i] 
+
+5. Apply Jacobi Iterations:
+   For k = 0 to n-1
+	For i = 1 to n
+	    sum = b[i]
+	    For j = 1 to n
+		If i ≠ j 
+		   sum = sum - a[j][i]x[j]
+		End If
+	    End j
+    	    x[i] = sum/a[i][i]
+	End i
+     x[k] = x
+     Check for convergence; continue if needed.
+     End k
+
+6. Display Solution:
+	
+	For i = 1 to n
+		
+		Print x[i]
+	
+	End i
+7. Stop

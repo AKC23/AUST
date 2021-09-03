@@ -1,0 +1,43 @@
+Algorithm: Gauss Jordan:
+Input: Order of the matrix, Coefficients of matrix of size n
+Output: Solution Vector {x1, x2,....xn}
+1. Declare the variables and read the order of the matrix n.
+2. Take the coefficients of the linear equation as:
+	for k=1 to n //access the rows
+		for j=1 to n+1 //access the columns
+			Read a[k][j]
+		End for j
+	End for k
+
+3. Apply Gauss Jordan Elimination on Matrix a:
+	For i = 1 to n
+	    If a[i][i] = 0
+	    Print "Mathematical Error!" and Stop
+	    End If
+	    For j = 1 to n
+		If i ≠ j 
+		   pivot = a[j][i]/a[i][i]
+		   For k = 1 to n+1
+		       a[j][k] = a[j][k] - pivot * a[i][k]
+		   End k
+		   End If
+	    End j
+	End i
+
+4. Obtaining Solution:
+	
+	For i = 1 to n 
+		x[i] = a[i][n+1]/a[i][i]
+	End i
+
+5. Display Solution:
+	
+	For i = 1 to n
+		
+		Print x[i]
+	
+	End i
+6. Stop
+
+
+

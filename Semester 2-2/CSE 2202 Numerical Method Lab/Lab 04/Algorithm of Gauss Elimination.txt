@@ -1,0 +1,36 @@
+Algorithm: Gauss Elimination with out pivoting:
+Input: Order of the matrix, Coefficients of matrix of size n
+Output: Solution Vector {x1, x2,....xn}
+1. Declare the variables and read the order of the matrix n.
+2. Take the coefficients of the linear equation as:
+	for k=1 to n //access the rows
+		for j=1 to n+1 //access the columns
+			Read a[k][j]
+		End for j
+	End for k
+
+3. Forward Elimination: 
+	for k=1 to n-1 //all the row accept last
+		for i=k+1 to n //all the row accept first row
+		  for j=k+1 to n+1 //access the coloums
+			a[i][j] = a[i][j] – a[i][k] /a[k][k] * a[k][j]
+		  End for j
+		End for i
+	End for k
+
+4. Forward Substitution
+	Compute x[n] = a[n][n+1]/a[n][n]
+	for k=n-1 to 1 //all the row accept last row
+	sum = 0
+		for j=k+1 to n
+			sum = sum + a[k][j] * x[j]
+		End for j
+	x[k] = 1/a[k][k] * (a[k][n+1] – sum)
+	End for k
+5. Print the soluion vector 
+    	For i = 1 to n
+		
+		Print Xi
+	
+
+6. Stop

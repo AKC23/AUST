@@ -1,0 +1,43 @@
+Algorithm: Gauss Seidel Method:
+Input: Order of the matrix, Coefficients of matrix of size n and vector b
+Output: Solution Vector {x1, x2,....xn}
+1. Declare the variables and read the order of the matrix n.
+2. Take the coefficients of the linear equation as:
+	for k=1 to n //access the rows
+		for j=1 to n //access the columns
+			Read a[k][j]
+		End for j
+	End for k
+3. Take the vector b
+	for i=1 to n
+           Read b[i]
+
+4. Choose initial guess x(0) to the solution x
+	for i=0 to n-1
+            x(0)[i] = 0
+
+5. Apply Gauss Seidel Iterations:
+   For k = 0 to k_max //k denotes iterative values of x vector
+	For i = 1 to n
+	    sum = 0
+	    For j = 1 to i-1
+		sum = sum + a[j][i]x(k+1)[j]
+	    End j
+            For j = i+1 to n
+		sum = sum + a[j][i]x(k)[j]
+	    End j
+    	    x(k+1)[i] = sum/a[i][i]
+	End i
+    Check |x(k+1) - x(k)|>error then continue
+    End k
+
+6. Display Solution:
+	
+	For i = 1 to n
+		
+		Print x[i]
+	
+	End i
+7. Stop
+
+
