@@ -1,0 +1,51 @@
+body {
+    background-color: #f2f2f2;
+}
+
+h1 {
+    color: black;
+    font-family: Calibri, 'Times New Roman', serif;
+    font-weight: normal;
+    text-align: center;
+    font-size: 50px;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+    font-family: Calibri;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.main-table-data {
+    padding: 15px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+}
+
+
+.inside-table {
+    text-align: center;
+}
+
+.inside-table-row1 {
+    width: 100%;
+    text-align: center;
+    background-color: white;
+}
+
+.inside-table-row2 {
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    background-color: white;
+}
+
+.image-class {
+    width: 100%;
+}
