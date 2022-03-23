@@ -1,0 +1,112 @@
+
+DROP DATABASE A2Online
+CREATE DATABASE A2Online
+
+DROP TABLE EMPLOYEE
+
+CREATE TABLE EMPLOYEE
+(
+EmpId int,
+FirstName varchar(255),
+LastName varchar(255)
+)
+
+
+INSERT INTO EMPLOYEE VALUES
+(101, 'John', 'Doe'),
+(301, 'Samantha', 'Simpson'),
+(401, 'Kuldeep', 'Rana'),
+(601, 'James', 'Hoog'),
+(801, 'Nail', 'Knite'),
+(201, 'Pit', 'Alex'),
+(501, 'Mc', 'Lyon'),
+(901, 'Paul', 'Adam'),
+(102, 'Lauson', 'Hen'),
+(505, 'Albert', 'Thomson'),
+(602, 'Robert', 'Ford'),
+(805, 'Alex', 'Gomez')
+
+select * from EMPLOYEE
+
+DROP TABLE "CALL" 
+
+CREATE TABLE "Call"
+(
+callId int,
+employee_id int,
+start_time datetime,
+end_time datetime,
+)
+
+
+INSERT INTO "Call" VALUES
+(1, 101, '2020-01-11 09:00:15:000','2020-01-11 09:12:22:000'),
+(2, 101,' 2020-01-11 09:14:50:000','2020-01-11 09:20:01:000'),
+(4, 201 ,'2020-01-11 09:24:15:000','2020-01-11 09:25:05:000'),
+(5, 801 ,'2020-01-11 09:26:23:000','2020-01-11 09:33:45:000'),
+(6, 505, '2020-01-11 09:40:31:000 ','2020-01-11 09:42:32:000'),
+(8, 101, '2020-01-11 09:42:32:000','2020-01-11 09:46:53:000')
+
+select * from "Call"
+
+
+/* Query 01 */
+
+select *,DateDiff(SECOND,start_time,end_time) as 'DurationsInSeconds' from "Call"
+
+ALTER TABLE "Call"
+ADD Duration int
+UPDATE "Call" SET Duration = DateDiff(SECOND,start_time,end_time)
+select *,DateDiff(SECOND,start_time,end_time) as 'DurationsInSeconds' from "Call"
+
+
+SELECT callId,employee_id,
+DATEDIFF(SECOND,START_TIME,END_TIME) 
+AS 'SECOND' FROM CALL
+
+
+
+/* Query 02 */
+SELECT employee_id,Duration FROM "Call" 
+WHERE Duration >(SELECT AVG(Duration) FROM "Call")
+
+
+SELECT employee_id,DATEDIFF(SECOND,START_TIME,END_TIME) AS 'AVERRAGE CALL DURATION' 
+FROM CALL GROUP BY employee_id,START_TIME,END_TIME 
+HAVING DATEDIFF(SECOND,START_TIME,END_TIME) > 
+(SELECT AVG(DATEDIFF(SECOND,START_TIME,END_TIME)  )FROM "CALL")
+
+
+
+/* Query 03 */
+select Employee.FirstName,Employee.LastName,Employee.EmpId 
+from Employee left join "Call"  
+on Employee.EmpId="Call".employee_id 
+where "Call".start_time=' '
+group by Employee.FirstName,Employee.LastName,Employee.EmpId
+
+
+SELECT callId FROM "Call" 
+
+SELECT Employee.EmpId , Employee.FIRSTNAME,Employee.LASTNAME
+FROM EMPLOYEE  LEFT JOIN CALL
+ON Employee.EmpId="Call".employee_id
+HAVING COUNT(EMPLOYEE.EMPID) >1 
+
+
+/* Query 04 */
+select EMPLOYEE.FirstName, count(callId) as 'NumberOfCalls'
+from EMPLOYEE 
+right join "Call"
+ON EMPLOYEE.EmpId = "Call".employee_id
+group by EMPLOYEE.FirstName
+
+SELECT * FROM "Call"
+
+
+
+
+
+
+
+
