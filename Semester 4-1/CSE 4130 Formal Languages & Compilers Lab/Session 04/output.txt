@@ -1,0 +1,37 @@
+
+1 
+2 
+3 id 
+
+float id x1 op = num 3.125 sep ; sep ; sep ; 
+4 
+5 id 
+
+double id f1 par ( kw float id a sep , kw int kw int id x par ) 
+6 id 
+ par { kw if par ( id x op < id x1 par ) 
+7 id 
+double id z sep ; sep ; 
+8 id 
+else id z op = num 0.01 sep ; par } par } 
+9 id 
+else kw return id z sep ; 
+10 id 
+ par } 
+11 
+12 id 
+
+int id main par ( kw void par ) 
+13 id 
+ par { par { par { par { 
+14 id 
+int id n1 sep ; kw double id z sep ; 
+15 id 
+n1 op = num 25 sep ; id z op = id f1 par ( id n1 par ) sep ; par } 
+
+Duplicate token at line 3
+Duplicate token at line 3
+Duplicate token at line 7
+Misplaced '}' at line 8
+Misplaced '}' at line 10
+Misplaced '}' at line 15

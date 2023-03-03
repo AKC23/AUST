@@ -1,0 +1,413 @@
+
+#include <bits/stdc++.h>
+#include <string.h>
+using namespace std;
+
+string result,result2;
+string Syntax_errors = "";
+vector<string> sym_arr;
+vector<string> syntactic;
+int line_num = 1;
+
+
+bool isDelimiter(char ch)
+{
+    if (ch == ' ' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '>' || ch == ',' || ch == ';' || ch == '\'' ||
+        ch == '<' || ch == '=' || ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}')
+    {
+        return (true);
+    }
+    return (false);
+}
+
+bool isOperator(char ch)
+{
+    if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '>' || ch == '<' || ch == '=')
+        return (true);
+    return (false);
+}
+
+bool validIdentifier(char *str)
+{
+    if (str[0] == '0' || str[0] == '1' || str[0] == '2' || str[0] == '3' || str[0] == '4' || str[0] == '5' ||
+        str[0] == '6' || str[0] == '7' || str[0] == '8' || str[0] == '9')
+        return (false);
+    return (true);
+}
+
+bool isKeyword(char *str)
+{
+    if (!strcmp(str, "if") || !strcmp(str, "else") || !strcmp(str, "while") || !strcmp(str, "do") || !strcmp(str, "break") ||
+        !strcmp(str, "continue") || !strcmp(str, "int") || !strcmp(str, "double") || !strcmp(str, "float") || !strcmp(str, "return") || !strcmp(str, "char") || !strcmp(str, "case") || !strcmp(str, "char") || !strcmp(str, "sizeof") || !strcmp(str, "long") || !strcmp(str, "short") || !strcmp(str, "typedef") || !strcmp(str, "switch") || !strcmp(str, "unsigned") || !strcmp(str, "void") || !strcmp(str, "static") || !strcmp(str, "struct") || !strcmp(str, "goto"))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool isInteger(char *str)
+{
+    int i, len = strlen(str);
+
+    if (len == 0)
+        return (false);
+    for (i = 0; i < len; i++)
+    {
+        if (str[i] != '0' && str[i] != '1' && str[i] != '2' && str[i] != '3' && str[i] != '4' && str[i] != '5' && str[i] != '6' && str[i] != '7' && str[i] != '8' && str[i] != '9')
+            return (false);
+    }
+    return (true);
+}
+
+bool isRealNumber(char *str)
+{
+    int i, len = strlen(str);
+    bool hasDecimal = false;
+
+    if (len == 0)
+        return (false);
+    for (i = 0; i < len; i++)
+    {
+        if (str[i] != '0' && str[i] != '1' && str[i] != '2' && str[i] != '3' &&
+            str[i] != '4' && str[i] != '5' && str[i] != '6' && str[i] != '7' && str[i] != '8' && str[i] != '9' && str[i] != '.')
+            return (false);
+        if (str[i] == '.' && isdigit(str[i - 1]) && isdigit(str[i + 1]))
+        // if (str[i] == '.' )
+        {
+            hasDecimal = true;
+        }
+
+    }
+    return (hasDecimal);
+}
+
+char *subString(char *str, int left, int right)
+{
+    int i;
+    char *subStr = (char *)malloc(sizeof(char) * (right - left + 2));
+    for (i = left; i <= right; i++)
+    {
+        subStr[i - left] = str[i];
+    }
+    subStr[right - left + 1] = '\0';
+    return (subStr);
+}
+
+
+string removeComments(string str)
+{
+	int k = str.length();
+	string result;
+	bool single_comments = false;
+	bool multiple_comments = false;
+
+	for (int j=0; j<k; j++)
+	{
+		if (single_comments == true && str[j] == '\n')
+			single_comments = false;
+		else if (multiple_comments == true && str[j] == '*' && str[j+1] == '/')
+			multiple_comments = false, j++;
+		else if (single_comments || multiple_comments)
+			continue;
+		else if (str[j] == '/' && str[j+1] == '/')
+			single_comments = true, j++;
+		else if (str[j] == '/' && str[j+1] == '*')
+			multiple_comments = true, j++;
+		else result += str[j];
+	}
+	return result;
+}
+
+string parse(char *str)
+{
+    bool keyword, bracket,b_global;
+    keyword = bracket = false;
+    // vector<string> sym_arr,key_arr, id_arr,result1;
+    string key_arr, id_arr,result1;
+    //string var = "var";
+    //string func = "func";
+    string var_type = "global";
+    string var_type2 = var_type;
+    //string func_name = " ";
+    bool token_misplaced = false, bracket_misplaced = false, In_func = false, If_Found = false, Else_Found = false;
+    int token_count = 0, bracket_count = 0;
+
+    bool double_operators = false;
+    int left = 0, right = 0;
+    int len = strlen(str);
+
+    while (right <= len && left <= right)
+    {
+        if (str[right] == '\n') {
+            
+            result = result +  "\n";
+            result = result + to_string(line_num) +" " +result2;
+            result2 = "";
+            line_num++;
+        }
+        
+        if (isDelimiter(str[right]) == false)
+        {
+            right++;
+        }
+        if (isDelimiter(str[right]) == true && left == right)
+        {
+            // check separator
+            if (str[right] == ',' || str[right] == ';' || str[right] == '\'')
+            {
+                if(token_misplaced)
+                {
+                    Syntax_errors += "Duplicate token at line "+ to_string(line_num) + "\n";
+                }
+                result2 = result2 + "sep " + str[right] + " ";
+                keyword = false;
+                token_misplaced = true;
+            }
+            // check parenthesis
+            else if (str[right] == '(' || str[right] == ')' || str[right] == '{' || str[right] == '}')
+            {
+                token_misplaced = false;
+
+                if( str[right] == '{')
+                {
+                    bracket = true;
+                    In_func = true;
+                    bracket_count++;
+                }
+                if(str[right] == '}')
+                {
+                    bracket = false;
+                    In_func = false;
+                    bracket_count--;
+                    if( (!In_func) && (bracket_count != 0) )
+                    {
+                        Syntax_errors += "Misplaced '}' at line "+ to_string(line_num) + "\n";
+                    }
+                }
+                result2 = result2 +"par "+ str[right] + " ";
+            }
+            // check operator
+            if (isOperator(str[right]) == true)
+            {
+                token_misplaced = false;
+                // check double operator first
+                if ((str[right] == '<' && str[right + 1] == '=') || (str[right] == '>' && str[right + 1] == '='))
+                {
+                    //result2 += "[op ";
+                    result2 = result2 + "op " + str[right] + str[right + 1] + "";
+                    //result2 += str[right];
+                    //result2 += str[right + 1];
+                    //result2 += " ";
+                    right += 1;
+                    double_operators = true;
+                }
+                // check single operator
+                else if (double_operators == false)
+                {
+                    //result2 += "[op ";
+                    result2 = result2 +"op "+ str[right] + " ";
+                    //result2 += " ";
+                }
+                double_operators = false;
+            }
+            right++;
+            left = right;
+        }
+        // character in middle or the last element
+        else if (isDelimiter(str[right]) == true && left != right || (right == len && left != right))
+        {
+            token_misplaced = false;
+            char *subStr = subString(str, left, right - 1); // substring(string, position, length);
+            //cout << "Found: "<<subStr<<"\n";
+            if (isKeyword(subStr) == true)
+            {   
+                
+                if(!strcmp(subStr, "float") || !strcmp(subStr, "double") || !strcmp(subStr, "int"))
+                {
+                    keyword = true;
+                    key_arr = subStr;
+                }
+                if(!strcmp(subStr, "if"))
+                {
+                    //cout << "Found: "<< subStr<< "\n";
+                    If_Found = true;
+                    Else_Found = true;
+                }
+                
+                //result2 += " "; //kw -> keyword  
+                result2 = result2 + "kw " + subStr + " ";
+                // cout << "Found: "<<subStr<<"\n";
+            }
+            else if (isInteger(subStr) == true)
+            {
+                //result2 += " ";
+                result2 = result2 + "num " + subStr + " ";
+                //result2 += " ";
+            }
+            else if (isRealNumber(subStr))
+            {
+                result2 = result2 + "num " + subStr + " ";
+                //result2 += subStr;
+                //result2 += " ";
+            }
+            else if (validIdentifier(subStr) == true && isDelimiter(str[right - 1]) == false)
+            {
+                // if(strcmp(subStr, "else"))
+                // {
+                //     Else_Found = true;
+                //     cout << "Found: "<<subStr<<" at line "+ to_string(line_num) + "\n";
+                //     //cout << "Found: "<<subStr<<"\n";
+                //     if(!If_Found && Else_Found)
+                //     {
+                //         Syntax_errors += "Unmatched 'else' at line "+ to_string(line_num) + "\n";
+                //         If_Found = false;
+                //         //Else_Found = false;
+                //     }
+                //     Else_Found = false;
+                // }
+                
+
+                result2 = result2 + "id "+ subStr + " ";
+                //result2 = result2+ subStr + " ";
+            }
+            else if (validIdentifier(subStr) == false && isDelimiter(str[right - 1]) == false)
+            {
+                // result2 += "[unkn ";
+                // result2 += subStr;
+                result2 = result2 + "unkn "+ subStr + " ";
+                // result2 += "]";
+            }
+            left = right;
+        }
+    }
+    // cout << "\nTotal line: " << line_num<<"\n\n";
+    return result;
+}
+
+
+string modified_token_stream(string str)
+{   
+    string newString,oldString;
+
+    int count = 1;
+
+    for (int i = 0; i < syntactic.size(); i++)
+    {
+        oldString = syntactic[i];
+
+        newString = to_string(count);
+        //cout << newString << " ";
+        size_t pos = 0;
+        while (pos += newString.length())
+        {
+            
+            pos = str.find(oldString, pos);
+            if (pos == std::string::npos) 
+            {
+                break;
+            }
+            str.erase(pos, oldString.length());
+            str.insert(pos, newString);
+        } 
+        count++;
+    }
+
+    return str;
+}
+
+string only_identifiers(string str)
+{
+    string str5 = str;
+    string substring;
+    
+    vector<string> substrings = {"num ", "kw ","op ","par ","sep "};
+
+    for (const auto& substring : substrings) 
+    {
+        size_t pos = str.find(substring);
+        while (pos != std::string::npos) {
+            str.erase(pos, substring.length());
+            pos = str.find(substring);
+        }
+    }
+    return str;
+}
+
+int main()
+{
+    ifstream file5("input1.txt");
+    string str5, str6;
+    ostringstream ss5, ss6;
+
+    ss5 << file5.rdbuf();
+    str5 = ss5.str();
+
+    if (str5.empty())
+    {
+        cout << "Input file can't be opened\n\n";
+    }
+    else
+    {
+        int n = str5.length();
+        char char_str[n + 1];
+        str5 = removeComments(str5);            //remove single and multiline comments
+        
+        //cout<<"\n\nString without comments\n"<<str5;
+        //str5.erase(remove(str5.begin(), str5.end(), '\t'), str5.end());
+        //str5.erase(remove(str5.begin(), str5.end(), '\n'), str5.end());
+        //str5.erase(remove(str5.begin(), str5.end(), ' '), str5.end());
+        //str5.erase(remove(str5.begin(), str5.end(), '*'), str5.end());
+        //str5.erase(remove(str5.begin(), str5.end(), '/'), str5.end());
+
+        //cout << "\nAfter removing extra space from 'input1.txt' file\n";
+        //cout << str5 << "\n";
+
+        strcpy(char_str, str5.c_str()); // string to character
+        str5 = parse(char_str);
+        /* cout<<"Sample input based on the program fragment:\n"<<str5;
+        str5 = only_identifiers(str5); */
+        
+        cout<<"\nStep1:"<<endl;
+        //cout<<str5;
+        
+        /* cout<<"\n\nStep2:\n"; //Symbol Table generation
+        int count = 1;
+        cout<<"Sl.No.\t  Name\tIdType DataType Scope\n";
+        cout << count<<"\t   ";
+        for (int i = 1; i < sym_arr.size()+1;i++)
+        {
+            cout<<sym_arr[i-1]<<"\t";
+            if( (i % 4) == 0 && (i < sym_arr.size()))
+            {
+               cout << "\n";
+               count++;
+               cout << count<<"\t   ";
+            } 
+        }
+
+        cout<<"\n\nStep3:\n";
+        str5 = modified_token_stream(str5); //Modified token stream for Syntactic Analysis: 
+        */
+    }
+    //cout<<"\nStep1:"<<endl;
+    //result = str5;
+    //cout << result;
+
+
+    fstream file6("output.txt", ios_base::out);
+    file6 << result;            // save result in text file
+    file6 << "\n\n";
+    file6<<Syntax_errors;
+    file6.close();
+
+    // display output from text file
+    // cout << "\n\nDisplaying 'output.txt' file:\n\n";
+    fstream file7("output.txt", ios_base::in);
+    ss6 << file7.rdbuf();
+    str6 = ss6.str();
+    cout << str6 << "\n";
+    file7.close(); 
+
+    return 0;
+}
