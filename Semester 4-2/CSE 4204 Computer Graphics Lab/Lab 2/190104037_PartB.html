@@ -1,0 +1,110 @@
+<html>
+  <title>190104037_PartB_Assignment02</title>
+  <canvas id="webglcanvas" width="500" height="500"></canvas>
+
+  <script>
+    var canvas = document.getElementById("webglcanvas");
+    var gl = canvas.getContext("webgl");
+
+    var vertexShaderSource = `
+      attribute vec3 a_coords;
+      attribute vec3 a_colors;
+      uniform float u_shift;
+
+      varying vec3 v_color;
+
+      void main() {
+        gl_Position = vec4(a_coords.x + u_shift, a_coords.y, a_coords.z, 1.0);
+        v_color = a_colors;
+      }
+    `;
+
+    var fragmentShaderSource = `
+  precision mediump float;
+  varying vec3 v_color;
+
+  void main() {
+    if (v_color.g > 0.5) {
+      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0); // Set green color if v_color's green component is greater than 0.5
+    } else if (v_color.b > 0.5) {
+      gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); // Set blue color if v_color's blue component is greater than 0.5
+    } else {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); // Set white color otherwise
+    }
+  }
+`;
+
+
+
+    var vsh = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vsh, vertexShaderSource);
+    gl.compileShader(vsh);
+
+    var fsh = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fsh, fragmentShaderSource);
+    gl.compileShader(fsh);
+
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vsh);
+    gl.attachShader(prog, fsh);
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    var a_coords_location = gl.getAttribLocation(prog, "a_coords");
+    var a_colors_location = gl.getAttribLocation(prog, "a_colors");
+
+    var vertices = new Float32Array(50 * 6); // 50 vertices, 6 values per vertex (3 for position, 3 for color)
+    var index = 0;
+
+    for (var i = 0; i < 50; i++) {
+    var angle = (i / 25) * Math.PI * 4; // Angle for each vertex
+    var x = Math.cos(angle) * 0.6; 
+    var y = Math.sin(angle) * 0.6; 
+
+    // Set the vertex coordinates
+    vertices[index++] = x;
+    vertices[index++] = y;
+    vertices[index++] = 0.0;
+
+    // vertex color
+    vertices[index++] = Math.random();
+    vertices[index++] = Math.random();
+    vertices[index++] = Math.random();
+    }
+
+    var vertexCount = vertices.length / 6; // 6 values per vertex (3 for position, 3 for color)
+
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(a_coords_location, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+    gl.enableVertexAttribArray(a_coords_location);
+
+    gl.vertexAttribPointer(a_colors_location, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+    gl.enableVertexAttribArray(a_colors_location);
+    
+
+    var u_shift_location = gl.getUniformLocation(prog, "u_shift");
+    var shift = 0.0;
+    gl.uniform1f(u_shift_location, shift);
+
+    gl.clearColor(Math.random(), Math.random(),Math.random(), 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowLeft") {
+        shift -= 0.1;
+      } else if (event.key === "ArrowRight") {
+        shift += 0.1;
+      }
+      
+      gl.uniform1f(u_shift_location, shift);
+      gl.clearColor(Math.random(), Math.random(), Math.random(), 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+    });
+
+  </script>
+</html>
