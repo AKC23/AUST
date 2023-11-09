@@ -1,0 +1,23 @@
+
+Instructions
+
+1. Download the COVID19+PNEUMONIA+NORMAL Chest X-Ray Image Dataset from this 
+link: https://www.kaggle.com/datasets/sachinkumar413/covid-pneumonia-normal-chest-xray-images 
+2. Split the dataset into train, validation and test sets.
+3. Prepare the data for your task 
+The data should be stratified in all the sets.
+Use manual_seed. 
+4. Build a classifier model. You can use any one of the following models.
+CNN
+LSTM
+RNN
+BiLSTM
+BiRNN.  
+5. Play around with your model. 
+
+The model with similar accuracies will be penalized. 
+
+You need to submit the assignment in your 6th lab.
+
+
+Project File: https://www.kaggle.com/code/ahmadulkc/covid19-pneumonia-normal-chest-x-ray/notebook?scriptVersionId=150037666
