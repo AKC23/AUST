@@ -20,4 +20,4 @@ The model with similar accuracies will be penalized.
 You need to submit the assignment in your 6th lab.
 
 
-Project File: https://www.kaggle.com/code/ahmadulkc/covid19-pneumonia-normal-chest-x-ray/notebook?scriptVersionId=150037666
+Project File: https://www.kaggle.com/ahmadulkc/covid19-pneumonia-normal-chest-x-ray
