@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="js/three.js"></script>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+        // projectionMatrix, modelViewMatrix, position -> passed in from Three.js
+        varying vec3 v_color;
+        void main()	{
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            v_color = position;
+        }
+    </script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+    
+        uniform float u_time;
+        varying vec3 v_color;
+        void main()	{
+           
+            gl_FragColor = vec4(abs(cos(v_color+u_time)), 1.0);
+        }
+    </script>
+    <script>
+
+        const scene = new THREE.Scene();
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        renderer.setClearColor(0x000000, 1);
+        renderer.clear();
+
+        //new new THREE.PerspectiveCamera(FOV, viewAspectRatio, zNear, zFar)
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+        var start = Date.now();
+        uniforms = {
+            u_time: { type: "f", value: (Date.now() - start)/1000 }
+        };
+
+        material = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent
+
+        });
+
+        const cube = new THREE.Mesh(geometry, material);
+        cube.rotation.x = 45;
+        cube.rotation.y = 45;
+        scene.add(cube);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            uniforms["u_time"].value = (Date.now() - start)/1000;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+    </script>
+</body>
+
+</html>
