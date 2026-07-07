@@ -1,0 +1,89 @@
+<!-- saved from url=(0065)http://math.hws.edu/graphicsbook/source/webgl/simple-texture.html -->
+<!-- modified by Mohammad Imrul Jubair -->
+
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>LAB-1: Intro</title>
+<canvas id="webglcanvas" width="500" height="500"></canvas>
+
+<script>
+
+var vertexShaderSource =
+
+       `attribute vec3 a_coords;
+        void main() {
+            gl_Position = vec4(a_coords, 1.0);
+            gl_PointSize = 10.0;
+        }`;
+
+
+var fragmentShaderSource =
+
+       `void main() {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }`;
+
+var gl;
+var a_coords_location;
+var a_coords_buffer;
+
+function draw() {
+
+    gl.clearColor(0,0,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    var coords = new Float32Array( [0.0, 0.0, 0.0] );
+	
+	// step - 9
+    gl.bindBuffer(gl.ARRAY_BUFFER, a_coords_buffer); // step - 9.a
+    gl.bufferData(gl.ARRAY_BUFFER, coords, gl.STATIC_DRAW); // step - 9.b
+    gl.vertexAttribPointer(a_coords_location, 3, gl.FLOAT, false, 0, 0); // step - 9.c
+    gl.enableVertexAttribArray(a_coords_location); // step - 9.d
+
+    gl.drawArrays(gl.POINTS, 0, 1); // step - 10
+}
+
+
+
+function createProgram(gl, vertexShaderSource, fragmentShaderSource) {
+  var vsh = gl.createShader( gl.VERTEX_SHADER ); // step - 1
+  gl.shaderSource( vsh, vertexShaderSource ); // step - 1.a
+  gl.compileShader( vsh ); // step - 1.b
+
+  var fsh = gl.createShader( gl.FRAGMENT_SHADER ); // step - 2
+  gl.shaderSource( fsh, fragmentShaderSource ); // step - 2.a
+  gl.compileShader( fsh ); // step - 2.b
+
+  var prog = gl.createProgram(); // step - 3
+  gl.attachShader( prog, vsh ); // step - 4
+  gl.attachShader( prog, fsh ); // step - 4
+  gl.linkProgram( prog ); // step - 5
+
+  return prog;
+}
+
+
+function initGL() {
+    var prog = createProgram( gl, vertexShaderSource, fragmentShaderSource ); // step - 1 to 5
+    gl.useProgram(prog); // step - 6
+
+    a_coords_location = gl.getAttribLocation(prog, "a_coords"); // step - 7
+    a_coords_buffer = gl.createBuffer(); // step - 8
+}
+
+
+function init() {
+    var canvas = document.getElementById("webglcanvas");
+    gl = canvas.getContext("webgl");
+    initGL();
+    draw();
+}
+
+init();
+
+</script>
+
+
+
+</html>
