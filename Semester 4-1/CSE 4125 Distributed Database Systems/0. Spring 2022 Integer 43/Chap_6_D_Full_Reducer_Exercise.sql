@@ -1,0 +1,123 @@
+DROP Table R
+DROP Table S
+DROP Table T
+
+CREATE TABLE R(A INT,B INT)
+
+Insert into R values(2,3)
+Insert into R values(6,0)
+Insert into R values(6,6)
+Insert into R values(7,7)
+
+SELECT * FROM R
+
+CREATE TABLE S(B int, C int)
+
+Insert into S values(0,1)
+Insert into S values(3,4)
+Insert into S values(6,7) 
+Insert into S values(7,7)
+
+
+
+SELECT * FROM S
+
+CREATE TABLE T(C int,A INT)
+
+Insert into T values(1,2)
+Insert into T values(4,5)
+Insert into T values(6,6)
+Insert into T values(7,7)
+
+SELECT * FROM T
+
+drop table R1
+drop table R2
+
+
+-- 1st
+SELECT * FROM R WHERE EXISTS (SELECT 1 FROM T WHERE R.A = T.A)
+
+SELECT * INTO R1 FROM (SELECT * FROM R WHERE EXISTS (SELECT 1 FROM T WHERE R.A = T.A))
+
+drop table R1
+
+WITH CTE AS (SELECT * FROM R WHERE EXISTS (SELECT 1 FROM T WHERE R.A = T.A))
+SELECT * INTO R1 FROM CTE
+
+SELECT * FROM R1
+
+-- 2nd
+drop table S1
+
+WITH CTE AS (SELECT * FROM S WHERE EXISTS (SELECT 1 FROM R1 WHERE S.B = R1.B))
+SELECT * INTO S1 FROM CTE
+
+SELECT * FROM S1
+
+
+-- 3rd
+drop table T1
+
+WITH CTE AS (SELECT * FROM T WHERE EXISTS (SELECT 1 FROM S1 WHERE T.C = S1.C))
+SELECT * INTO T1 FROM CTE
+
+SELECT * FROM T1
+
+
+
+-- 4th
+drop table R2
+
+WITH CTE AS (SELECT * FROM R1 WHERE EXISTS (SELECT 1 FROM T1 WHERE R1.A = T1.A))
+SELECT * INTO R2 FROM CTE
+
+SELECT * FROM R2
+
+
+-- 5th
+drop table S2
+
+WITH CTE AS (SELECT * FROM S1 WHERE EXISTS (SELECT 1 FROM R2 WHERE S1.B = R2.B))
+SELECT * INTO S2 FROM CTE
+
+SELECT * FROM S2
+
+
+
+-- 6th
+drop table T2
+
+WITH CTE AS (SELECT * FROM T1 WHERE EXISTS (SELECT 1 FROM S2 WHERE T1.C = S2.C))
+SELECT * INTO T2 FROM CTE
+
+SELECT * FROM T2
+
+
+-- 7th
+drop table R3
+
+WITH CTE AS (SELECT * FROM R2 WHERE EXISTS (SELECT 1 FROM T2 WHERE R2.A = T2.A))
+SELECT * INTO R3 FROM CTE
+
+SELECT * FROM R3
+
+
+-- 8th 
+
+drop table S3
+
+WITH CTE AS (SELECT * FROM S2 WHERE EXISTS (SELECT 1 FROM R3 WHERE S2.B = R3.B))
+SELECT * INTO S3 FROM CTE
+
+SELECT * FROM S3
+
+-- 9th
+drop table T3
+
+WITH CTE AS (SELECT * FROM T2 WHERE EXISTS (SELECT 1 FROM S3 WHERE T2.C = S3.C))
+SELECT * INTO T3 FROM CTE
+
+SELECT * FROM T3
+
+
